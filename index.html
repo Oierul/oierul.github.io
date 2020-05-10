@@ -1,0 +1,179 @@
+<html>
+<head>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/css/mdb.min.css" rel="stylesheet">
+    <!-- Material Design for Bootstrap CSS -->
+<!--    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">-->
+    <title>Turtle hibernation calculator</title>
+    <style>
+        .result-post-hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <!-- Content here -->
+        <div class="">
+            <div class="row" style="margin-top: 4em;">
+                <div class="col-1">
+                </div>
+                <div class="col-4">
+                    <div class="card">
+
+                        <h5 class="card-header info-color white-text text-center py-4">
+                            <strong>TURTLE HIBERNATION CALCULATOR</strong>
+                        </h5>
+
+                        <div class="card-body px-lg-5 pt-0">
+                            <form style="color: #757575;">
+                                <div class="md-form">
+                                    <label for="defaultLength">Shell length (cm)</label>
+                                    <input type="text" id="defaultLength" class="form-control" aria-label="Shell length (cm)" />
+                                </div>
+                                <div class="md-form">
+                                    <label for="defaultWeight">Weight before brumation (g)</label>
+                                    <input type="text" id="defaultWeight" class="form-control" aria-label="Weight before brumation (g)"/>
+                                </div>
+
+                                <button class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit" id="defaultSubmit">Compute</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <p class="h4 mb-4 text-center result-post-hidden" id="defaultResult" style="margin-top: 2em">
+                        Result for
+                        <span id="resultLength"></span>cm and
+                        <span id="resultWeight"></span>g is
+                        <span id="resultValid" style="font-weight: bold;"></span>
+                    </p>
+
+                    <button class="btn btn-outline-warning btn-rounded btn-block my-4 waves-effect z-depth-0 result-post-hidden" type="button" id="defaultReset">Reset</button>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-6" style="border-left: 1px dashed #333">
+                    <h4 style="text-align: center">Your computed results will appear here!</h4>
+
+                    <div class="row" style="margin-top: 2em">
+                        <div class="col-2"></div>
+                        <div class="col-8">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Length (cm)</th>
+                                    <th scope="col">Weight (g)</th>
+                                    <th scope="col">Result</th>
+                                    <th scope="col">Min (g)</th>
+                                    <th scope="col">Max (g)</th>
+                                </tr>
+                                </thead>
+                                <tbody id="defaultResultsTableBody">
+<!--                                <tr>-->
+<!--                                    <th scope="row">1</th>-->
+<!--                                    <td>Mark</td>-->
+<!--                                    <td>Otto</td>-->
+<!--                                    <td>@mdo</td>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <th scope="row">2</th>-->
+<!--                                    <td>Jacob</td>-->
+<!--                                    <td>Thornton</td>-->
+<!--                                    <td>@fat</td>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <th scope="row">3</th>-->
+<!--                                    <td>Larry</td>-->
+<!--                                    <td>the Bird</td>-->
+<!--                                    <td>@twitter</td>-->
+<!--                                </tr>-->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bigdecimal@0.6.1/lib/bigdecimal.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+
+    <script>
+        jQuery(document).ready(() => {
+
+            // jQuery.get('data.json', data => {
+            //     console.log('data is', data);
+            //
+            //
+            // });
+
+            // jQuery('#defaultLoader').addClass('result-post-hidden');
+            // jQuery('#defaultForm').removeClass('result-post-hidden');
+
+            let resultCount = 0;
+
+            jQuery('#defaultSubmit').click(e => {
+                e.preventDefault();
+
+                let length = jQuery('#defaultLength').val();
+                let weight = jQuery('#defaultWeight').val();
+
+                let result = testos(length, weight);
+
+                jQuery('#resultLength').text(length);
+                jQuery('#resultWeight').text(weight);
+
+                let resultValid = jQuery('#resultValid');
+
+                if (result) {
+                    resultValid.text('VALID');
+                    resultValid.css('color', 'green');
+                } else {
+                    resultValid.text('INVALID');
+                    resultValid.css('color', 'red');
+                }
+
+                jQuery('#defaultResult').removeClass('result-post-hidden');
+                jQuery('#defaultReset').removeClass('result-post-hidden');
+
+                resultCount++;
+                let { min, max } = computeFactors(length);
+                jQuery('#defaultResultsTableBody').append(jQuery.parseHTML(
+                    `<tr>
+                        <th scope="row">${resultCount}</th>
+                        <td>${length}</td>
+                        <td>${weight.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
+                        <td>${result ? '<span style="color: green"><i class="fas fa-check"></i></span>' : '<span style="color: red"><i class="fas fa-times"></i></span>'}</td>
+                        <td>${parseFloat(min).toFixed(3)}</td>
+                        <td>${parseFloat(max).toFixed(3)}</td>
+                    </tr>`
+                ));
+            });
+
+            jQuery('#defaultReset').click(e => {
+                jQuery('#defaultLength').val('');
+                jQuery('#defaultWeight').val('');
+
+                jQuery('#defaultResult').addClass('result-post-hidden');
+                jQuery('#defaultReset').addClass('result-post-hidden');
+            });
+        });
+    </script>
+</body>
+</html>
