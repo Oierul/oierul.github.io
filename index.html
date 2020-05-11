@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/css/mdb.min.css" rel="stylesheet">
     <!-- Material Design for Bootstrap CSS -->
 <!--    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">-->
-    <title>Turtle hibernation calculator</title>
+    <title>Emys orbicularis hibernation calculator</title>
     <style>
         .result-post-hidden {
             display: none;
@@ -27,34 +27,47 @@
                 <div class="col-1">
                 </div>
                 <div class="col-4">
-                    <div class="card">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
 
-                        <h5 class="card-header info-color white-text text-center py-4">
-                            <strong>TURTLE HIBERNATION CALCULATOR</strong>
-                        </h5>
+                                <h5 class="card-header info-color white-text text-center py-4">
+                                    <strong>EMYS ORBICULARIS</strong> <br>
+                                    <strong>HIBERNATION CALCULATOR</strong>
+                                </h5>
+                                <div class="card-body px-lg-5 pt-0">
+                                    <form style="color: #757575;">
+                                        <div class="md-form">
+                                            <label for="defaultLength">Shell length (cm)</label>
+                                            <input type="text" id="defaultLength" class="form-control" aria-label="Shell length (cm)" required />
+                                        </div>
+                                        <div class="md-form">
+                                            <label for="defaultWeight">Weight before hibernation (g)</label>
+                                            <input type="text" id="defaultWeight" class="form-control" aria-label="Weight before hibernation (g)" required />
+                                        </div>
 
-                        <div class="card-body px-lg-5 pt-0">
-                            <form style="color: #757575;">
-                                <div class="md-form">
-                                    <label for="defaultLength">Shell length (cm)</label>
-                                    <input type="text" id="defaultLength" class="form-control" aria-label="Shell length (cm)" />
+                                        <button class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit" id="defaultSubmit">Compute</button>
+                                    </form>
                                 </div>
-                                <div class="md-form">
-                                    <label for="defaultWeight">Weight before brumation (g)</label>
-                                    <input type="text" id="defaultWeight" class="form-control" aria-label="Weight before brumation (g)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 2em;">
+                        <div class="col-2"></div>
+                        <div class="col-8">
+                            <div id="defaultResult" class="card text-white text-center mb-3 result-post-hidden" style="max-width: 20rem;">
+                                <div class="card-header"><span id="resultLength"></span>cm | <span id="resultWeight"></span>g</div>
+                                <div class="card-body">
+                                    <h5 class="card-title" id="resultValid"></h5>
                                 </div>
-
-                                <button class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0" type="submit" id="defaultSubmit">Compute</button>
-                            </form>
+                            </div>
                         </div>
                     </div>
 
-                    <p class="h4 mb-4 text-center result-post-hidden" id="defaultResult" style="margin-top: 2em">
-                        Result for
-                        <span id="resultLength"></span>cm and
-                        <span id="resultWeight"></span>g is
-                        <span id="resultValid" style="font-weight: bold;"></span>
-                    </p>
+<!--                    <p class="h4 mb-4 text-center result-post-hidden" id="defaultResult" style="margin-top: 2em">-->
+<!--                        <span id="resultLength"></span>cm | <span id="resultWeight"></span>g <br>-->
+<!--                        <span id="resultValid" style="font-weight: bold;"></span>-->
+<!--                    </p>-->
 
                     <button class="btn btn-outline-warning btn-rounded btn-block my-4 waves-effect z-depth-0 result-post-hidden" type="button" id="defaultReset">Reset</button>
                 </div>
@@ -63,17 +76,19 @@
                     <h4 style="text-align: center">Your computed results will appear here!</h4>
 
                     <div class="row" style="margin-top: 2em">
-                        <div class="col-2"></div>
-                        <div class="col-8">
+<!--                        <div class="col-2"></div>-->
+                        <div class="col">
                             <table class="table">
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Length (cm)</th>
-                                    <th scope="col">Weight (g)</th>
+                                    <th scope="col">Length</th>
+                                    <th scope="col">Weight</th>
                                     <th scope="col">Result</th>
                                     <th scope="col">Min (g)</th>
+                                    <th scope="col">Avg (g)</th>
                                     <th scope="col">Max (g)</th>
+                                    <th scope="col"><span style="color: black" onclick="clearAll()"><i class="fas fa-trash-alt"></i></span></th>
                                 </tr>
                                 </thead>
                                 <tbody id="defaultResultsTableBody">
@@ -112,58 +127,114 @@
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bigdecimal@0.6.1/lib/bigdecimal.min.js"></script>
+    <script type="text/javascript" src="store.js"></script>
     <script type="text/javascript" src="main.js"></script>
 
     <script>
         jQuery(document).ready(() => {
+            let resultStatusMapper = [
+                {
+                    text: 'UNDERWEIGHT',
+                    color: 'red',
+                    icon: 'fa-times',
+                    badge: 'badge-danger',
+                    panel: 'bg-danger',
+                },
+                {
+                    text: 'OPTIMAL WEIGHT',
+                    color: 'green',
+                    icon: 'fa-check',
+                    badge: 'badge-success',
+                    panel: 'bg-success',
+                },
+                {
+                    text: 'ABOVE OPTIMAL WEIGHT',
+                    color: 'orange',
+                    icon: 'fa-check',
+                    badge: 'badge-warning',
+                    panel: 'bg-warning',
+                },
+                {
+                    text: 'OVERWEIGHT',
+                    color: 'red',
+                    icon: 'fa-times',
+                    badge: 'badge-danger',
+                    panel: 'bg-danger',
+                },
+            ];
 
-            // jQuery.get('data.json', data => {
-            //     console.log('data is', data);
-            //
-            //
-            // });
+            window.drawTable = function() {
+                let tBody = jQuery('#defaultResultsTableBody');
+                tBody.empty();
 
-            // jQuery('#defaultLoader').addClass('result-post-hidden');
-            // jQuery('#defaultForm').removeClass('result-post-hidden');
+                let measurements = turtleStore.measurements();
 
-            let resultCount = 0;
+                Object.keys(measurements).map((key, indexKey) => {
+                    tBody.append(jQuery.parseHTML(
+                        `<tr>
+                        <th scope="row">${indexKey + 1}</th>
+                        <td style="text-align: right">${measurements[key].length}cm</td>
+                        <td style="text-align: right">${measurements[key].weight.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}g</td>
+<!--                        <td><span style="color: ${resultStatusMapper[measurements[key].result].color}"><i class="fas ${resultStatusMapper[measurements[key].result].icon}"></i></span></td>-->
+                        <td><span class="badge ${resultStatusMapper[measurements[key].result].badge}">${resultStatusMapper[measurements[key].result].text}</span></td>
+                        <td>${parseFloat(measurements[key].min).toFixed(3)}</td>
+                        <td>${parseFloat(measurements[key].avg).toFixed(3)}</td>
+                        <td>${parseFloat(measurements[key].max).toFixed(3)}</td>
+                        <td><span style="color: red" onclick="turtleStore.remove(\'${measurements[key].uuid}\'); drawTable();"><i class="fas fa-trash-alt"></i></span></td>
+                    </tr>`
+                    ));
+                });
+            };
+
+            turtleStore.syncFromLocalStorage();
+            window.clearAll = function() {
+                if (Object.keys(turtleStore.measurements()).length > 0) {
+                    if (confirm('Are you sure you want to clear all measurements?\nThis action cannot be undone!')) {
+                        turtleStore.clear();
+                        drawTable();
+                    }
+                }
+            };
+
+            drawTable();
+
+            function updateResultPanelBg(panel) {
+                jQuery('#defaultResult')
+                    .removeClass('bg-danger bg-success bg-warning')
+                    .addClass(panel)
+                ;
+            }
 
             jQuery('#defaultSubmit').click(e => {
-                e.preventDefault();
-
                 let length = jQuery('#defaultLength').val();
                 let weight = jQuery('#defaultWeight').val();
 
-                let result = testos(length, weight);
+                if (length && weight) {
+                    e.preventDefault();
 
-                jQuery('#resultLength').text(length);
-                jQuery('#resultWeight').text(weight);
+                    let result = testos(length, weight);
 
-                let resultValid = jQuery('#resultValid');
+                    jQuery('#resultLength').text(length);
+                    jQuery('#resultWeight').text(weight);
 
-                if (result) {
-                    resultValid.text('VALID');
-                    resultValid.css('color', 'green');
-                } else {
-                    resultValid.text('INVALID');
-                    resultValid.css('color', 'red');
+                    let resultValid = jQuery('#resultValid');
+
+                    resultValid.text(resultStatusMapper[result].text);
+                    // resultValid.css('color', resultStatusMapper[result].color);
+
+                    updateResultPanelBg(resultStatusMapper[result].panel);
+
+                    jQuery('#defaultResult').removeClass('result-post-hidden');
+                    jQuery('#defaultReset').removeClass('result-post-hidden');
+
+                    let { min, max, avg } = computeFactors(length);
+
+                    turtleStore.add({
+                        min, max, avg, result, length, weight,
+                    });
+
+                    drawTable();
                 }
-
-                jQuery('#defaultResult').removeClass('result-post-hidden');
-                jQuery('#defaultReset').removeClass('result-post-hidden');
-
-                resultCount++;
-                let { min, max } = computeFactors(length);
-                jQuery('#defaultResultsTableBody').append(jQuery.parseHTML(
-                    `<tr>
-                        <th scope="row">${resultCount}</th>
-                        <td>${length}</td>
-                        <td>${weight.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
-                        <td>${result ? '<span style="color: green"><i class="fas fa-check"></i></span>' : '<span style="color: red"><i class="fas fa-times"></i></span>'}</td>
-                        <td>${parseFloat(min).toFixed(3)}</td>
-                        <td>${parseFloat(max).toFixed(3)}</td>
-                    </tr>`
-                ));
             });
 
             jQuery('#defaultReset').click(e => {
