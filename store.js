@@ -9,6 +9,11 @@ const turtleStore = {
 
         turtleData.measurements[uuid] = data;
         turtleStore.syncToLocalStorage();
+
+        const indexKey = Object.keys(turtleData.measurements).length - 1;
+        const item = turtleData.measurements[uuid];
+
+        return { item, indexKey };
     },
 
     remove: uuid => {

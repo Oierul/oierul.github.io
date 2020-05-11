@@ -164,26 +164,28 @@
             ];
 
             window.drawTable = function() {
-                let tBody = jQuery('#defaultResultsTableBody');
-                tBody.empty();
+                jQuery('#defaultResultsTableBody').empty();
 
                 let measurements = turtleStore.measurements();
-
                 Object.keys(measurements).map((key, indexKey) => {
-                    tBody.append(jQuery.parseHTML(
-                        `<tr>
-                        <th scope="row">${indexKey + 1}</th>
-                        <td style="text-align: right">${measurements[key].length}cm</td>
-                        <td style="text-align: right">${measurements[key].weight.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}g</td>
-<!--                        <td><span style="color: ${resultStatusMapper[measurements[key].result].color}"><i class="fas ${resultStatusMapper[measurements[key].result].icon}"></i></span></td>-->
-                        <td><span class="badge ${resultStatusMapper[measurements[key].result].badge}">${resultStatusMapper[measurements[key].result].text}</span></td>
-                        <td>${parseFloat(measurements[key].min).toFixed(3)}</td>
-                        <td>${parseFloat(measurements[key].avg).toFixed(3)}</td>
-                        <td>${parseFloat(measurements[key].max).toFixed(3)}</td>
-                        <td><span style="color: red" onclick="turtleStore.remove(\'${measurements[key].uuid}\'); drawTable();"><i class="fas fa-trash-alt"></i></span></td>
-                    </tr>`
-                    ));
+                    appendComputedResult(measurements[key], indexKey);
                 });
+            };
+            
+            window.appendComputedResult = function(measurement, indexKey) {
+                jQuery('#defaultResultsTableBody').append(jQuery.parseHTML(
+                    `<tr>
+                        <th scope="row">${indexKey + 1}</th>
+                        <td style="text-align: right">${measurement.length}cm</td>
+                        <td style="text-align: right">${measurement.weight.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}g</td>
+<!--                        <td><span style="color: ${resultStatusMapper[measurement.result].color}"><i class="fas ${resultStatusMapper[measurement.result].icon}"></i></span></td>-->
+                        <td><span class="badge ${resultStatusMapper[measurement.result].badge}">${resultStatusMapper[measurement.result].text}</span></td>
+                        <td>${parseFloat(measurement.min).toFixed(3)}</td>
+                        <td>${parseFloat(measurement.avg).toFixed(3)}</td>
+                        <td>${parseFloat(measurement.max).toFixed(3)}</td>
+                        <td><span style="color: red" onclick="turtleStore.remove(\'${measurement.uuid}\'); drawTable();"><i class="fas fa-trash-alt"></i></span></td>
+                    </tr>`
+                ));
             };
 
             turtleStore.syncFromLocalStorage();
@@ -229,11 +231,11 @@
 
                     let { min, max, avg } = computeFactors(length);
 
-                    turtleStore.add({
+                    let { item, indexKey } = turtleStore.add({
                         min, max, avg, result, length, weight,
                     });
 
-                    drawTable();
+                    appendComputedResult(item, indexKey);
                 }
             });
 
